@@ -1,8 +1,10 @@
 //@Author Souheil Rejeb
 package com.optimalluft.simplexe;
+
+
 import java.util.ArrayList;
 
-public class Simplexe_Phase_I 
+public class Simplexe_Phase_I
 {
 	private int m;
 	private int n;
@@ -27,17 +29,21 @@ public class Simplexe_Phase_I
 
 	private double[] pivot_column=new double[m];
 	private double[] bk_column=new double[m];
-
+	
+	
+	
 	public Simplexe_Phase_I() 
 	{
-		this.m=3;
+		// TODO Auto-generated constructor stub
+		this.m=2;
 		this.n=3;
-		double[] b= {-1100.0,-1400.0,-1500.0,0.0};
+		double[] b= {-6.0,-10.0};
 		this.setB_vector_init(b);
-		double[][] i_m= {{1.0,2.0,1.0},{1.0,3.0,2.0},{1.0,1.0,3.0}};
+		double[][] i_m= {{1.0,1.0,2.0},{1.0,2.0,1.0}};
 		this.setInitial_matrix(i_m);
+		
 	}
-
+	
 	public void compute_negative_values()
 	{
 		for(int i=0;i<b_vector_init.length;i++)
@@ -79,8 +85,8 @@ public class Simplexe_Phase_I
 	
 	public void build_b_vector()
 	{
-		double[] b =new double[this.getM()+1];
-		for(int i=0;i<this.getM()+1;i++)
+		double[] b =new double[this.getM()];
+		for(int i=0;i<this.getM();i++)
 		{
 			if(this.getB_vector_init()[i]<0)
 			{
@@ -119,16 +125,16 @@ public class Simplexe_Phase_I
 		double[][] augmented_matrix=new double[this.getM()+2][this.getM()+this.getN()+this.getNegative_multiplicity()+1];
 		for(int i=0;i<this.getM();i++)
 		{
-			for(int j=0;j<this.getM();j++)
+			for(int j=0;j<this.getN();j++)
 			{
 				augmented_matrix[i][j]=this.getInitial_matrix()[i][j];
 			}
 		}
 		for(int i=0;i<this.getM();i++)
 		{
-			for(int j=this.getM();j<this.getM()+this.getN();j++)
+			for(int j=this.getN();j<this.getM()+this.getN();j++)
 			{
-				if(j==this.getM()+i)
+				if(j==this.getN()+i)
 				{
 					augmented_matrix[i][j]=-1.0;
 				}
@@ -183,6 +189,7 @@ public class Simplexe_Phase_I
 		this.setAugmented_matrix(augmented_matrix);
 		
 	}
+	
 	
 	public Integer compute_pivot_column_index()
 	{
@@ -277,7 +284,7 @@ public class Simplexe_Phase_I
 			}
 		}
 		this.setBase(b);
-	}
+	}	
 	
 	public void update_c_b()
 	{
@@ -375,16 +382,20 @@ public class Simplexe_Phase_I
 		}
 		this.setBase(b);
 	}	
-	
+
 	public void build_c_vector_objective()
 	{
-		double[] c= {340.0,2400.0,560.0};
-		double[] c1=new double[this.getN()+this.getM()];
+		double[] c= {1.0,1.5,3.0};
+		double[] c1=new double[this.getN()+this.getM()+this.negative_multiplicity];
 		for(int i=0;i<this.getN()+this.getM();i++)
 		{
 			if( i<this.getN())
 			{
 				c1[i]=c[i];
+			}
+			else if(i>=this.getN()+this.getM())
+			{
+				;
 			}
 			else
 			{
@@ -401,6 +412,7 @@ public class Simplexe_Phase_I
 		{
 			if(this.getBase()[i]<this.getN()+this.getM()+this.getNegative_multiplicity())
 			{
+				System.out.println(this.getBase()[i]);
 				c_b[i]=this.getC_vector_objective()[this.getBase()[i]];
 			}
 		}
@@ -653,10 +665,10 @@ public class Simplexe_Phase_I
 	}
 	
 	
-
-	
-	public static void main(String[] args)
+	public static void main(String[] args) 
 	{
+		// TODO Auto-generated method stub
+		
 		Simplexe_Phase_I s1=new Simplexe_Phase_I();
 		s1.compute_negative_values();
 		s1.build_negative_values();
@@ -665,16 +677,34 @@ public class Simplexe_Phase_I
 		s1.initialize_base();
 		s1.initialize_c_b();
 		s1.build_augmented_matrix();
-		s1.apply_simplexe_phase();
-		s1.display(s1.getAugmented_matrix());
+		s1.apply_simplexe_phase();	
 		s1.build_c_vector_objective();
 		s1.reevaluate_c_b();
 		s1.reevaluate_augmented_matrix();
-		System.out.println("########################################");
-		s1.apply_simplexe_phase_II();	
+		s1.apply_simplexe_phase_II();
 		s1.display(s1.getAugmented_matrix_II());
 		
+	}
+	
+	public double[][] getAugmented_matrix_II() {
+		return augmented_matrix_II;
+	}
 
+	public void setAugmented_matrix_II(double[][] augmented_matrix_II) {
+		this.augmented_matrix_II = augmented_matrix_II;
+	}
+	
+	
+	
+	
+	
+	public ArrayList<Double> getNegative_values()
+	{
+		return negative_values;
+	}
+
+	public void setNegative_values(ArrayList<Double> negative_values) {
+		this.negative_values = negative_values;
 	}
 
 	public int getM() {
@@ -717,28 +747,12 @@ public class Simplexe_Phase_I
 		this.negative_multiplicity = negative_multiplicity;
 	}
 
-	public ArrayList<Double> getNegative_values() {
-		return negative_values;
-	}
-
-	public void setNegative_values(ArrayList<Double> negative_values) {
-		this.negative_values = negative_values;
-	}
-
 	public double[] getC_vector() {
 		return c_vector;
 	}
 
 	public void setC_vector(double[] c_vector) {
 		this.c_vector = c_vector;
-	}
-
-	public double[] getC_vector_objective() {
-		return c_vector_objective;
-	}
-
-	public void setC_vector_objective(double[] c_vector_objective) {
-		this.c_vector_objective = c_vector_objective;
 	}
 
 	public int[] getBase() {
@@ -781,36 +795,12 @@ public class Simplexe_Phase_I
 		this.pivot_line_index = pivot_line_index;
 	}
 
-	public int getPivot_column_index_II() {
-		return pivot_column_index_II;
-	}
-
-	public void setPivot_column_index_II(int pivot_column_index_II) {
-		this.pivot_column_index_II = pivot_column_index_II;
-	}
-
-	public int getPivot_line_index_II() {
-		return pivot_line_index_II;
-	}
-
-	public void setPivot_line_index_II(int pivot_line_index_II) {
-		this.pivot_line_index_II = pivot_line_index_II;
-	}
-
 	public double[][] getAugmented_matrix() {
 		return augmented_matrix;
 	}
 
 	public void setAugmented_matrix(double[][] augmented_matrix) {
 		this.augmented_matrix = augmented_matrix;
-	}
-
-	public double[][] getAugmented_matrix_II() {
-		return augmented_matrix_II;
-	}
-
-	public void setAugmented_matrix_II(double[][] augmented_matrix_II) {
-		this.augmented_matrix_II = augmented_matrix_II;
 	}
 
 	public double[] getPivot_column() {
@@ -828,7 +818,31 @@ public class Simplexe_Phase_I
 	public void setBk_column(double[] bk_column) {
 		this.bk_column = bk_column;
 	}
+
+	public double[] getC_vector_objective() {
+		return c_vector_objective;
+	}
+
+	public void setC_vector_objective(double[] c_vector_objective) {
+		this.c_vector_objective = c_vector_objective;
+	}
+
+	public int getPivot_column_index_II() {
+		return pivot_column_index_II;
+	}
+
+	public void setPivot_column_index_II(int pivot_column_index_II) {
+		this.pivot_column_index_II = pivot_column_index_II;
+	}
+
+	public int getPivot_line_index_II() {
+		return pivot_line_index_II;
+	}
+
+	public void setPivot_line_index_II(int pivot_line_index_II) {
+		this.pivot_line_index_II = pivot_line_index_II;
+	}
+
 	
-	
-	
+
 }
